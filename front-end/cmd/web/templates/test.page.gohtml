@@ -6,6 +6,7 @@
             <div class="col">
                 <h1 class="mt-5">Test microservices</h1>
                 <hr>
+                <a id="brokerBtn" class="btn btn-primary" href="javascript:void(0)">Broker</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -31,6 +32,42 @@
 
 {{define "js"}}
     <script>
-        
+        let broker = document.getElementById('brokerBtn');
+        let payload = document.getElementById('payload');
+        let received = document.getElementById('received');
+        let output = document.getElementById('output');
+
+        broker.addEventListener('click', () => {
+            const body = { method: 'POST'}
+            fetch("http:\/\/localhost:8080", body)
+                .then(response => response.json())
+                .then(data => {
+                    payload.innerHTML = "empty post";
+                    received.innerHTML = JSON.stringify(data, undefined, 4);
+                    if (data.error) {
+                        output.innerHTML = data.error;
+                    } else {
+                        output.innerHTML += `<br><strong>Success! Response from broker service</strong> : ${data.message}`;
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        payload.addEventListener('input', () => {
+            payload.innerHTML = payload.value;
+        });
+
+        received.addEventListener('input', () => {
+            received.innerHTML = received.value;
+        });
+
+        payload.addEventListener('input', () => {
+            payload.innerHTML = payload.value;
+        });
+
+        received.addEventListener('input', () => {
+            received.innerHTML = received.value;
+        });
     </script>
 {{end}}
