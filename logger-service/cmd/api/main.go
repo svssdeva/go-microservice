@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log-service/data"
 	"net/http"
@@ -46,23 +47,32 @@ func main() {
 		Models: data.New(client),
 	}
 
-	go app.serve()
+	// go app.serve()
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%s", webPort),
+		Handler: app.routes(),
+	}
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Panic(err)
+	}
 
 	log.Println("Starting logger service on port", webPort)
 }
 
-func (app *Config) serve() {
-	// Implementation of the serve method goes here
-	srv := &http.Server{
-		Addr:    ":%s" + webPort,
-		Handler: app.routes(),
-	}
+// func (app *Config) serve() {
+// 	// Implementation of the serve method goes here
+// 	srv := &http.Server{
+// 		Addr:    ":%s" + webPort,
+// 		Handler: app.routes(),
+// 	}
 
-	err := srv.ListenAndServe()
-	if err != nil {
-		log.Panic(err)
-	}
-}
+// 	err := srv.ListenAndServe()
+// 	if err != nil {
+// 		log.Panic(err)
+// 	}
+// }
 
 func connectToMongo() (*mongo.Client, error) {
 	clientOptions := options.Client().ApplyURI(mongoURL)
