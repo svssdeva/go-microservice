@@ -2,7 +2,7 @@ services:
   broker:
     build:
       context: ./../broker-service
-      dockerfile: ./../broker-service/broker.dockerfile
+      dockerfile: broker.dockerfile
     ports:
       - "8080:80"
     deploy:
@@ -12,7 +12,7 @@ services:
   logger-service:
     build:
       context: ./../logger-service
-      dockerfile: ./../logger-service/logger.dockerfile
+      dockerfile: logger.dockerfile
     restart: always
     deploy:
       mode: replicated
@@ -21,7 +21,7 @@ services:
   authentication-service:
     build:
       context: ./../authentication-service
-      dockerfile: ./../authentication-service/authentication-service.dockerfile
+      dockerfile: authentication-service.dockerfile
     ports:
       - "8081:80"
     restart: always
@@ -41,7 +41,7 @@ services:
       - "5432:5432"
     restart: always
     volumes:
-      - ./db-data/postgres/:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     deploy:
       mode: replicated
       replicas: 1
@@ -56,7 +56,11 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     restart: always
     volumes:
-      - ./db-data/mongo/:/data/db
+      - mongo_data:/data/db
     deploy:
       mode: replicated
       replicas: 1
+
+volumes:
+  postgres_data:
+  mongo_data:

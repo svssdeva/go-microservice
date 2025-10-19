@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 )
 
@@ -53,7 +54,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) { {
+func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 	// create some json we'll send to the log microservice
 	jsonData, _ := json.MarshalIndent(entry, "", "\t")
 
@@ -64,6 +65,7 @@ func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) { {
 		return
 	}
 	request.Header.Set("Content-Type", "application/json")
+
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
@@ -74,7 +76,7 @@ func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) { {
 
 	// make sure we get back the correct status code
 	if response.StatusCode != http.StatusAccepted {
-		app.errorJSON(w, errors.New("error calling log service" + err))
+		app.errorJSON(w, fmt.Errorf("error calling log service: status %d", response.StatusCode))
 		return
 	}
 
